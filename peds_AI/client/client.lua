@@ -6,8 +6,8 @@ local pedatual
 RegisterNUICallback("sair", function()
     SetDisplay(false)
     ClearPedTasks(pedatual)
-    --TaskWanderStandard(pedatual, 10.0, 10)
-    pedatual = nil
+    TaskWanderStandard(pedatual, 10.0, 10)
+     
 end)
 
 RegisterNUICallback("falar", function(e)
@@ -29,9 +29,13 @@ RegisterNUICallback("recrutar", function(e)
     SetPedRelationshipGroupHash(pedatual, 'PLAYER')
     ClearPedTasks(pedatual)
 
+    SetBlockingOfNonTemporaryEvents(pedatual, true)
+    SetPedCanEvasiveDive(pedatual, false)
+
 
     SetDisplay(false)
-    pedatual = nil
+    
+    
 end)
 
 function SetDisplay(bool)
@@ -63,13 +67,13 @@ end
 
 function lerPeds()
 
-    if DoesEntityExist(pedatual) then
+    if DoesEntityExist(pedatual) and display == true then
         TaskLookAtEntity(pedatual , PlayerPedId(), -1,2048, 3)
         TaskGoToEntity(pedatual, PlayerPedId(), -1, 2.0, 2.0, 1073741824, 0)
     end
 
 
-    if IsPedOnFoot(PlayerPedId())  and not DoesEntityExist(pedatual) then
+    if IsPedOnFoot(PlayerPedId())  then
 
         
 
