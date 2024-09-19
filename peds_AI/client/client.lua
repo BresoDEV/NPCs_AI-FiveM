@@ -63,15 +63,15 @@ end
 
 function lerPeds()
 
-    
+    if DoesEntityExist(pedatual) then
+        TaskLookAtEntity(pedatual , PlayerPedId(), -1,2048, 3)
+        TaskGoToEntity(pedatual, PlayerPedId(), -1, 2.0, 2.0, 1073741824, 0)
+    end
 
 
     if IsPedOnFoot(PlayerPedId())  and not DoesEntityExist(pedatual) then
 
-        if DoesEntityExist(pedatual) then
-            TaskLookAtEntity(pedatual , PlayerPedId(), -1,2048, 3)
-            TaskGoToEntity(pedatual, PlayerPedId(), -1, 2.0, 2.0, 1073741824, 0)
-        end
+        
 
         local peds = GetGamePool("CPed")
         for _, z in pairs(peds) do
