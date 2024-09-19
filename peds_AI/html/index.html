@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <link rel="stylesheet" href="reset.css" type="text/css">
+    <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+    <title>Document</title>
+</head>
+<style>
+    body,
+    html {
+        background-color: transparent !important;
+        background: transparent !important;
+    }
+
+    .um {
+        font-family: monospace;
+        font-weight: bolder;
+        position: fixed;
+        width: 20%;
+        right: 20%;
+        top: 10%;
+    }
+
+    li {
+        cursor: pointer;
+        background: rgba(75, 15, 124, 0.8);
+        background-color: rgba(75, 15, 124, 0.8);
+        margin-top: 3px;
+        color: aliceblue;
+        padding: 5px;
+        border-radius: 4px;
+        font-size: 12px;
+        text-align: center;
+
+    }
+
+    li:hover {
+        scale: 1.05;
+        background: linear-gradient(to right, rgb(87, 61, 238), rgb(162, 0, 255));
+    }
+</style>
+
+<body>
+    <div class="um" id="container">
+        <ul>
+            <li id="dizerOi">Dizer OI</li>
+            <li id="PerguntarNome">Qual seu nome?</li> 
+            <li id="PerguntarIdade">Qual sua idade?</li>
+            <li id="PerguntarHobbyes">Qual seu hobby?</li>
+            <li id="PerguntarEndereco">Onde voce mora?</li>
+            <li id="PerguntarTelefone">Qual seu telefone?</li>
+            <li id="PerguntarEmail">Qual seu e-mail?</li>
+            <li id="ContarPiada">Contar Piadas</li>
+            <li id="Passear">Convidar para um Passeio</li>
+            <li id="Tchau">Dar Tchau</li>
+        </ul>
+    </div>
+</body>
+<script src="script.js" type="text/javascript"></script>
+<script src="profileBuild.js"></script>
+<script>
+
+var modeloPed = ''
+     
+ 
+ 
+
+window.addEventListener('message', function(event) {
+    //console.log('recebeu o evento message')
+        var item = event.data;
+        if (item.type === "ui") {
+            //console.log('type UI ok')
+            if (item.status == true) {
+                //console.log('status OK')
+                modeloPed = item.modeloPed
+                //console.log(modeloPed)
+                _get(modeloPed.toUpperCase())
+                recarregarButtons()
+                
+                
+            }  
+            if (item.status == false) {
+                esconderTudo()
+            }  
+        }
+    })
+
+
+
+
+const lis = document.querySelectorAll('li')
+        lis.forEach(li => {
+            li.style.display = 'none'
+        });
+
+    const PerguntarNome = document.getElementById('PerguntarNome')//-------
+    const dizerOi = document.getElementById('dizerOi')//-----------
+    
+    
+    const PerguntarIdade = document.getElementById('PerguntarIdade')//-----
+    const PerguntarHobbyes = document.getElementById('PerguntarHobbyes')//-------
+    const PerguntarEndereco = document.getElementById('PerguntarEndereco')//====
+    const PerguntarTelefone = document.getElementById('PerguntarTelefone')//==
+    const PerguntarEmail = document.getElementById('PerguntarEmail')//=====
+    const ContarPiada = document.getElementById('ContarPiada')
+    const Passear = document.getElementById('Passear')
+    const Tchau = document.getElementById('Tchau')
+
+
+
+    
+
+
+    
+
+    function recarregarButtons() {
+        _get(modeloPed.toUpperCase())
+
+        if (localGet(modeloPed.toUpperCase() + '_ja_interagiu_com_player') !== '1') {
+            document.getElementById('dizerOi').style.display = 'block'
+            document.getElementById('Tchau').style.display = 'block'
+        }
+        else {
+            document.getElementById('dizerOi').style.display = 'block'
+            document.getElementById('PerguntarNome').style.display = 'block'
+            document.getElementById('PerguntarIdade').style.display = 'block'
+
+            if (parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) >= 2) {
+                //document.getElementById('PerguntarSobreEmprego').style.display = 'block'
+                document.getElementById('PerguntarHobbyes').style.display = 'block'
+
+                if (parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) >= 4) {
+                    document.getElementById('PerguntarEndereco').style.display = 'block'
+                    document.getElementById('PerguntarTelefone').style.display = 'block'
+                    document.getElementById('PerguntarEmail').style.display = 'block'
+
+                    if (parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) >= 6) {
+                        document.getElementById('ContarPiada').style.display = 'block'
+                        document.getElementById('Passear').style.display = 'block'
+                    }
+                }
+
+            }
+            document.getElementById('Tchau').style.display = 'block'
+            exibir()
+        }
+    }
+
+
+    //console.log(localGet(modeloPed.toUpperCase() + ''))
+
+    document.getElementById('Passear').addEventListener('click', () => {
+        ///enviar Passear pro jogo
+
+        
+        $.post('http://peds_AI/recrutar', JSON.stringify({
+            texto: 123
+        }));
+
+        recarregarButtons()
+    })
+
+    document.getElementById('ContarPiada').addEventListener('click', () => {
+        ///enviar ContarPiada pro jogo
+
+        recarregarButtons()
+    })
+
+    document.getElementById('PerguntarEmail').addEventListener('click', () => {
+        ///enviar PerguntarEmail pro jogo
+        //console.log(falarEmail(modeloPed))
+
+        
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: falarEmail(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_intimidade', parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) + 1)
+        recarregarButtons()
+    })
+
+
+    document.getElementById('PerguntarTelefone').addEventListener('click', () => {
+        ///enviar PerguntarTelefone pro jogo
+        //console.log(falarTelefone(modeloPed))
+
+        
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: falarTelefone(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_intimidade', parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) + 1)
+        recarregarButtons()
+    })
+
+    document.getElementById('PerguntarEndereco').addEventListener('click', () => {
+        ///enviar PerguntarEndereco pro jogo
+
+        //console.log(falarEndereco(modeloPed))
+
+        
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: falarEndereco(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_intimidade', parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) + 1)
+        recarregarButtons()
+    })
+
+    document.getElementById('PerguntarHobbyes').addEventListener('click', () => {
+        ///enviar PerguntarHobbyes pro jogo
+
+        //console.log(falarHobbies(modeloPed))
+
+        
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: falarHobbies(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_intimidade', parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) + 1)
+        recarregarButtons()
+    })
+
+   
+
+
+
+    document.getElementById('PerguntarIdade').addEventListener('click', () => {
+        ///enviar PerguntarIdade pro jogo
+
+        //console.log(falarIdade(modeloPed))
+
+        
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: falarIdade(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_intimidade', parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) + 1)
+        recarregarButtons()
+    })
+
+    document.getElementById('PerguntarNome').addEventListener('click', () => {
+        ///enviar PerguntarNome pro jogo
+
+        //console.log(falarNome(modeloPed))
+
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: falarNome(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_intimidade', parseInt(localGet(modeloPed.toUpperCase() + '_intimidade')) + 1)
+        recarregarButtons()
+    })
+
+    document.getElementById('dizerOi').addEventListener('click', () => {
+        ///enviar oi pro jogo
+
+        //console.log(ola(modeloPed))
+
+        $.post('http://peds_AI/falar', JSON.stringify({
+            texto: ola(modeloPed)
+        }));
+
+        localSet(modeloPed.toUpperCase() + '_ja_interagiu_com_player', '1')
+        recarregarButtons()
+    })
+
+    document.getElementById('Tchau').addEventListener('click', () => {
+        esconderTudo()
+        $.post('http://peds_AI/sair', JSON.stringify({
+            valor: 123
+        }));
+    })
+
+
+
+
+
+
+
+
+
+    //background: rgba(75, 15, 124, 0.8);
+    //    background-color: rgba(75, 15, 124,0.8);
+
+    
+    function exibir() {
+        const lis = document.querySelectorAll('li')
+
+        lis.forEach(element => {
+            var ii = 10
+             
+            var b = setInterval(() => {
+                setTimeout(() => {
+                    if (element) {
+                        element.style.backgroundColor = 'rgba(75, 15, 124,0.' + ii + ')'
+                        element.style.background = 'rgba(75, 15, 124,0.' + ii + ')'
+                        //console.log(ii)
+                        ii++
+                        if (ii === 99) {
+                            
+                            clearInterval(b)
+                        }
+                    }
+                }, 10);
+            }, 10);
+        });
+    }
+
+
+    function esconderTudo() {
+        const lis = document.querySelectorAll('li')
+
+        lis.forEach(element => {
+            var ii = 99
+            var b = setInterval(() => {
+                setTimeout(() => {
+                    if (element) {
+                        element.style.backgroundColor = 'rgba(75, 15, 124,0.' + ii + ')'
+                        element.style.background = 'rgba(75, 15, 124,0.' + ii + ')'
+                        //console.log(ii)
+                        ii--
+                        if (ii === 10) {
+                            element.style.display = 'none'
+                            clearInterval(b)
+                        }
+                    }
+                }, 10);
+            }, 10);
+        });
+    }
+
+
+    
+
+</script>
+
+</html>

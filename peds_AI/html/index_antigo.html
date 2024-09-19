@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <link rel="stylesheet" href="reset.css" type="text/css">
+    <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+    <title>NUI Example</title>
+</head>
+<style>
+    .gui {
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 5px;
+        padding: 5px;
+        border: 1px solid brown;
+        margin-bottom: 8px;
+    }
+</style>
+
+<body>
+    <div class="menu" id="container">
+        <form id="form">
+            <button class="Sair" id="Sair">X</button>
+            <br>
+            <p id="title">Time:</p>
+            <input type="range" min="0" max="23" id="clock">
+        </form>
+    </div>
+    <script src="./script.js" type="text/javascript"></script>
+</body>
+<script>
+    document.getElementById('Sair').addEventListener('input', () => {
+        $.post('http://NUI_Example/exit', JSON.stringify({}));
+        return
+    })
+    document.getElementById('clock').addEventListener('input', () => {
+        $.post('http://NUI_Example/hora', JSON.stringify({
+            valor: document.getElementById('clock').value
+        }));
+    })
+    setInterval(() => {
+        document.getElementById('title').innerHTML = 'Time: ' + document.getElementById('clock').value + ':00'
+    }, 1);
+</script>
+
+</html>
